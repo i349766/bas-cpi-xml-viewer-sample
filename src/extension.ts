@@ -39,12 +39,38 @@ function getWebviewContent(filePath:string) {
     var str = fs.readFileSync(filePath, 'utf8');
     var parser = new xml2js.Parser();
     parser.parseString(str, (e:any, r:any) => {result = r});
-    //const obj = xml2json.toJson(str, { object: true });
-    var arr = result["edmx:Edmx"]["edmx:DataServices"][0]["Schema"][0]["EntityType"]
-    var divs:string = "";
-    for(var i =  0; i< arr.length;i++) {
-        divs = divs + `<div>` + result["edmx:Edmx"]["edmx:DataServices"][0]["Schema"][0]["EntityType"][i]["Key"][0]["PropertyRef"][0]['$']["Name"] + `</div> <br />`;
+    var divs = "";
+    var variantList = result["ComponentMetadata"]["Variant"];
+    for(var i = 0; i < variantList.length; i++) {
+        var variantName = variantList[i]["$"].VariantName;
+        var variantsDiv = "<div>" + "<h1>Variant: " + variantName + "</h1>";
+        var tabsList = variantList[i]["Tab"];
+        for(var j = 0; j < tabsList.length; j++) {
+            var tabHeading = tabsList[j]["GuiLabels"][0]["Label"][0]["_"];
+            var tabsDiv = "<div><h2>Tab: " + tabHeading + "</h2>";
+            var attributeGroups = tabsList[j]["AttributeGroup"];
+            for(var k = 0; k < attributeGroups.length; k++) {
+                var attributeGroupLabel = attributeGroups[k]["GuiLabels"][0]["Label"][0]["_"];
+                var attributeGroupsDiv = "<div><h3>" + attributeGroupLabel + "</h3>";
+                var attributeReferences = attributeGroups[k]["AttributeReference"];
+                for(var l = 0; l < attributeReferences.length; l++) {
+                    var referenceName = attributeReferences[l].ReferenceName[0];
+                    var description = attributeReferences[l].description[0];
+                    var attributeReferencesDiv = "<div><h4>" + referenceName + "</h4>" +"Description- " + description + "</div>";
+                    attributeGroupsDiv += attributeReferencesDiv;
+                }
+                attributeGroupsDiv += "</div>";
+                tabsDiv += attributeGroupsDiv;
+            }
+            tabsDiv += "</div>";
+            variantsDiv += tabsDiv;
+        }
+        variantsDiv += "</div>";
+        divs += variantsDiv;
     }
+    // for(var i =  0; i< arr.length;i++) {
+    //     divs = divs + `<div>` + result["edmx:Edmx"]["edmx:DataServices"][0]["Schema"][0]["EntityType"][i]["Key"][0]["PropertyRef"][0]['$']["Name"] + `</div> <br />`;
+    // }
     return htmlBeginning + `<div>` + divs + `</div>` + htmlEnding;
 }
 

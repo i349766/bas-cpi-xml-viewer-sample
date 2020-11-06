@@ -25,7 +25,7 @@
       },
       {
         "command": "cpi-xml-viewer.open",
-        "title": "View CPI XML"
+        "title": "View Component Metadata"
       }
     ],
     "menus": {
