@@ -50,7 +50,10 @@ function getWebviewContent(filePath:string) {
             var tabsDiv = "<div><h2>Tab: " + tabHeading + "</h2>";
             var attributeGroups = tabsList[j]["AttributeGroup"];
             for(var k = 0; k < attributeGroups.length; k++) {
-                var attributeGroupLabel = attributeGroups[k]["GuiLabels"][0]["Label"][0]["_"];
+                var attributeGroupLabel="";
+                try {
+                    attributeGroupLabel = attributeGroups[k]["GuiLabels"][0]["Label"][0]["_"];
+                } catch(err) {}
                 var attributeGroupsDiv = "<div><h3>" + attributeGroupLabel + "</h3>";
                 var attributeReferences = attributeGroups[k]["AttributeReference"];
                 for(var l = 0; l < attributeReferences.length; l++) {
